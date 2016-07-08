@@ -1,0 +1,9 @@
+{% import "macros.html" as macros %}
+{% extends "base.html" %}
+{% block content %}
+<h1> hello</h1>
+{% for entry in entries %}
+{{ macros.render_entry(entry) }}
+{% endfor %}
+
+{% endblock %}

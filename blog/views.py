@@ -46,3 +46,9 @@ def add_entry_post():
     session.add(entry)
     session.commit()
     return redirect(url_for("entries"))
+
+
+@app.route("/entry/<id>")
+def view_entry(id):
+    entry=session.query(Entry).filter(Entry.id==id).one()
+    return render_template("view_entry.html", entry=entry)

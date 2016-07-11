@@ -1,11 +1,10 @@
 from flask import render_template, request, redirect, url_for, flash
-from flask.ext.login import login_user
 from werkzeug.security import check_password_hash
 from .database import User
 
 from . import app
 from .database import session, Entry
-from flask_login import login_required
+from flask_login import login_required, current_user,login_user, logout_user, user_logged_in
 
 #Shows 10 entries on default otherwise based on select tag in entries.html
 #No greater than 50 entries at a time
@@ -71,6 +70,7 @@ def add_entry_post():
     entry=Entry(
         title=request.form["title"],
         content=request.form["content"],
+        author=current_user
     )
     session.add(entry)
     session.commit()
@@ -85,6 +85,9 @@ def view_entry(id):
 @app.route("/entry/<id>/edit", methods=["GET"])
 def edit_entry_get(id):
     entry=session.query(Entry).filter(Entry.id==id).one()
+    if  current_user.is_anonymous or entry.author.email != current_user.email:
+        flash("You do not have authorization to edit this entry.", "danger")
+        return redirect('/')
     return render_template("edit_entry.html",entry=entry)
     
 @app.route("/entry/<id>/edit", methods=["POST"])
@@ -119,6 +122,9 @@ def login_post():
         
     login_user(user)
     return redirect(request.args.get('next') or url_for("entries"))
-
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect('/')
 
     

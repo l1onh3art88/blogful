@@ -18,6 +18,9 @@
         <p>
             <a href = "{{ url_for ('delete_entry', id=entry.id)}}" onclick="clicked()">Delete Entry</a>
         </p>
+        <p>
+            Author: {{ entry.author.name}}
+        </p>
     </div>
     <div class="col-md-10">
         <h1>

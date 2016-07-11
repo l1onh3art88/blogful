@@ -1,7 +1,11 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
+from flask.ext.login import login_user
+from werkzeug.security import check_password_hash
+from .database import User
 
 from . import app
 from .database import session, Entry
+from flask_login import login_required
 
 #Shows 10 entries on default otherwise based on select tag in entries.html
 #No greater than 50 entries at a time
@@ -57,10 +61,12 @@ def entries(page=1):
 
 
 @app.route("/entry/add", methods=["GET"])
+@login_required
 def add_entry_get():
     return render_template("add_entry.html")
     
 @app.route("/entry/add", methods=["POST"])
+@login_required
 def add_entry_post():
     entry=Entry(
         title=request.form["title"],
@@ -98,6 +104,21 @@ def delete_entry(id):
     session.commit()
     return redirect(url_for("entries"))
     
+@app.route("/login", methods=["GET"])
+def login_get():
+    return render_template("login.html")
+    
+@app.route("/login", methods=["POST"])    
+def login_post():
+    email=request.form["email"]
+    password=request.form["password"]
+    user=session.query(User).filter_by(email=email).first()
+    if not user or not check_password_hash(user.password, password):
+        flash("Incorrect username or password", "danger")
+        return redirect(url_for("login_get"))
+        
+    login_user(user)
+    return redirect(request.args.get('next') or url_for("entries"))
 
 
     

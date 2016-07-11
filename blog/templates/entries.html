@@ -1,6 +1,15 @@
 {% import "macros.html" as macros %}
 {% extends "base.html" %}
 {% block content %}
+ <form method="GET" action= '{{url_for('entries')}}'>
+    Entries per page: 
+    <select class = "form-control" max=50 name = "limit" id="limit" onchange='this.form.submit()'>
+        <option value = "5"> 5</option>
+        <option value ="10">10</option>
+        <option value = "15">15</option>
+        <option value = "20">20</option>
+    </select>
+</form> 
 {% for entry in entries %}
 {{ macros.render_entry(entry) }}
 {% endfor %}

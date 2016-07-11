@@ -3,7 +3,8 @@ from flask import render_template, request, redirect, url_for
 from . import app
 from .database import session, Entry
 
-PAGINATE_BY= 10
+#Shows 10 entries on default otherwise based on select tag in entries.html
+#No greater than 50 entries at a time
 @app.route("/")
 @app.route("/page/<int:page>/?limit=20")
 
@@ -53,10 +54,7 @@ def entries(page=1):
     page=page,
     total_pages=total_pages,
     )
-@app.route("/test")
-def test():
-    select=request.args.get('limit')
-    return(str(select))
+
 
 @app.route("/entry/add", methods=["GET"])
 def add_entry_get():
@@ -91,6 +89,8 @@ def edit_entry_put(id, title=None, content=None):
         session.add(entry)
         session.commit()
         return redirect(url_for("entries"))
+        
+#deletes entry
 @app.route("/entry/<id>/delete")
 def delete_entry(id):
     entry=session.query(Entry).filter(Entry.id==id).one()

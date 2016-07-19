@@ -51,6 +51,7 @@ def entries(page=1):
         entries = entries.order_by(Entry.datetime.desc())
         entries = entries[start:end]
     return render_template("entries.html",
+    paginate_by=PAGINATE_BY,
     entries=entries,
     has_next=has_next,
     has_prev=has_prev,
@@ -93,7 +94,7 @@ def edit_entry_get(id):
 @app.route("/entry/<id>/edit", methods=["POST"])
 def edit_entry_put(id, title=None, content=None):
         entry=session.query(Entry).filter(Entry.id==id).one()
-        entry.title=request.args.get['limit'],
+        entry.title=request.form['title'],
         entry.content=request.form["content"]
         session.add(entry)
         session.commit()

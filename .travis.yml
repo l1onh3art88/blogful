@@ -1,7 +1,7 @@
 language: python
 python:
     - "3.4"
-install: python3 -m pip install -r requirements.txt
+install: python3 -m pip install --upgrade pip && pip install -r requirements.txt
 env:
     - CONFIG_PATH=blog.config.TravisConfig
 before_script:
